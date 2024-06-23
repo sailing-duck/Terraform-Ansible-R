@@ -1,0 +1,33 @@
+---
+- name: Install R and Rstudio Server
+  hosts: servers
+  become: true
+
+  tasks:
+  - name: update apt cache
+    apt:
+      update_cache: yes
+
+  - name: Install R base
+    apt:
+      name: r-base
+      state: present
+
+  - name: Install gdebi-core
+    apt:
+      name: gdebi-core
+      state: present
+  
+  - name: Download RStduio Server package
+    get_url:
+      url: https://download2.rstudio.org/server/jammy/amd64/rstudio-server-2024.04.1-748-amd64.deb
+      dest: /tmp/rstudio-server-2024.04.1-748-amd64.deb
+  
+  - name: Install RStuido Server package
+    command: gdebi --non-interactive /tmp/rstudio-server-2024.04.1-748-amd64.deb
+
+  - name: Ensure RStudio Server is running
+    service: 
+      name: rstudio-server
+      state: started  
+      enabled: yes
